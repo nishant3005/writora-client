@@ -24,10 +24,8 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        'http://localhost:1234/api/auth/signup',
-        form
-      );
+      const API = process.env.REACT_APP_API_BASE_URL;
+      const res = await axios.post(`${API}/auth/signup`, form);
       toast.success(res.data.message);
       navigate('/login');
     } catch (err) {

@@ -13,9 +13,11 @@ const AdminDashboard = () => {
     headers: { Authorization: `Bearer ${token}` },
   };
 
+  const API = process.env.REACT_APP_API_BASE_URL;
+
   const fetchBlogs = async () => {
     try {
-      const res = await axios.get('http://localhost:1234/api/blogs');
+      const res = await axios.get(`${API}/blogs`);
       setBlogs(res.data);
     } catch (err) {
       toast.error('Error fetching blogs');
@@ -37,14 +39,10 @@ const AdminDashboard = () => {
 
     try {
       if (editId) {
-        await axios.put(
-          `http://localhost:1234/api/blogs/${editId}`,
-          form,
-          config
-        );
+        await axios.put(`${API}/blogs/${editId}`, form, config);
         toast.success('Blog updated');
       } else {
-        await axios.post('http://localhost:1234/api/blogs', form, config);
+        await axios.post(`${API}/blogs`, form, config);
         toast.success('Blog created');
       }
 
@@ -63,7 +61,7 @@ const AdminDashboard = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:1234/api/blogs/${id}`, config);
+      await axios.delete(`${API}/blogs/${id}`, config);
       toast.success('Blog deleted');
       fetchBlogs();
     } catch (err) {

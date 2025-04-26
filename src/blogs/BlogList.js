@@ -7,7 +7,9 @@ const BlogList = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get('http://localhost:1234/api/blogs');
+        const API = process.env.REACT_APP_API_BASE_URL;
+
+        const res = await axios.get(`${API}/api/blogs`);
         setBlogs(res.data);
       } catch (err) {
         console.error('Error fetching blogs:', err);
