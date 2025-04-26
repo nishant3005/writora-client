@@ -1,0 +1,102 @@
+import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+const Signup = () => {
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'user',
+  });
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post(
+        'http://localhost:1234/api/auth/signup',
+        form
+      );
+      toast.success(res.data.message);
+      navigate('/login');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Signup failed');
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500 p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-2xl font-bold text-center mb-6 text-purple-700">
+          Create an Account
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email address"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button
+            type="submit"
+            className="w-full py-3 font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded transition"
+          >
+            Sign Up
+          </button>
+        </form>
+        <p className="text-center text-gray-600 text-sm mt-4">
+          Already have an account?{' '}
+          <a
+            href="/login"
+            className="text-purple-700 font-semibold hover:underline"
+          >
+            Sign in
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Signup;
