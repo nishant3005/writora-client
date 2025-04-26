@@ -8,6 +8,8 @@ const AdminDashboard = () => {
   const [blogs, setBlogs] = useState([]);
   const [form, setForm] = useState({ title: '', content: '' });
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
 
   const config = {
     headers: { Authorization: `Bearer ${token}` },
@@ -16,11 +18,14 @@ const AdminDashboard = () => {
   const API = process.env.REACT_APP_API_BASE_URL;
 
   const fetchBlogs = async () => {
+    setFetchLoading(true);
     try {
       const res = await axios.get(`${API}/blogs`);
       setBlogs(res.data);
     } catch (err) {
       toast.error('Error fetching blogs');
+    } finally {
+      setFetchLoading(false);
     }
   };
 
@@ -36,6 +41,9 @@ const AdminDashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
+
+    setLoading(true);
 
     try {
       if (editId) {
@@ -51,6 +59,8 @@ const AdminDashboard = () => {
       fetchBlogs();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Error submitting blog');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +87,16 @@ const AdminDashboard = () => {
     );
   }
 
+  if (fetchLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500">
+        <div className="text-white text-xl font-semibold animate-pulse">
+          Loading blogs...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 p-8">
       <div className="max-w-4xl mx-auto">
@@ -94,23 +114,28 @@ const AdminDashboard = () => {
             placeholder="Blog Title"
             value={form.title}
             onChange={handleChange}
+            disabled={loading}
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
           />
           <textarea
             name="content"
             placeholder="Blog Content"
             value={form.content}
             onChange={handleChange}
+            disabled={loading}
             required
             rows={4}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
           />
           <button
             type="submit"
-            className="w-full py-3 font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded transition"
+            disabled={loading}
+            className={`w-full py-3 font-semibold text-white rounded transition ${
+              loading ? 'bg-purple-300' : 'bg-purple-600 hover:bg-purple-700'
+            }`}
           >
-            {editId ? 'Update Blog' : 'Create Blog'}
+            {loading ? 'Saving...' : editId ? 'Update Blog' : 'Create Blog'}
           </button>
         </form>
 

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 const Login = () => {
   const { login } = useContext(AuthContext);
   const [form, setForm] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -14,6 +15,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
 
     try {
       const API = process.env.REACT_APP_API_BASE_URL;
@@ -23,6 +28,8 @@ const Login = () => {
       navigate('/');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,8 +46,9 @@ const Login = () => {
             placeholder="Email address"
             value={form.email}
             onChange={handleChange}
+            disabled={loading}
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
           />
           <input
             type="password"
@@ -48,14 +56,18 @@ const Login = () => {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
+            disabled={loading}
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
           />
           <button
             type="submit"
-            className="w-full py-3 font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded transition"
+            disabled={loading}
+            className={`w-full py-3 font-semibold text-white rounded transition ${
+              loading ? 'bg-purple-300' : 'bg-purple-600 hover:bg-purple-700'
+            }`}
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
         <p className="text-center text-gray-600 text-sm mt-4">

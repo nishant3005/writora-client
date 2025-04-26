@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -13,11 +14,23 @@ const BlogList = () => {
         setBlogs(res.data);
       } catch (err) {
         console.error('Error fetching blogs:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchBlogs();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500">
+        <div className="text-white text-xl font-semibold animate-pulse">
+          Loading blogs...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 p-8">
