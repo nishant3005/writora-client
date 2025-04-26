@@ -9,7 +9,7 @@ const BlogList = () => {
       try {
         const API = process.env.REACT_APP_API_BASE_URL;
 
-        const res = await axios.get(`${API}/api/blogs`);
+        const res = await axios.get(`${API}/blogs`);
         setBlogs(res.data);
       } catch (err) {
         console.error('Error fetching blogs:', err);
